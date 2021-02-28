@@ -1,30 +1,27 @@
 {
-  "name": "webpack-starter",
-  "version": "1.0.0",
-  "description": "A light foundation for your next frontend project based on webpack.",
+  "name": "bravia-web-controller",
+  "version": "0.1.0",
+  "description": "A website based controller for Bravia TV",
   "scripts": {
-    "lint": "npm run lint:styles; npm run lint:scripts",
-    "lint:styles": "stylelint src",
-    "lint:scripts": "eslint src",
+    "prebuild": "rimraf build",
     "build": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
-    "start": "webpack serve --config webpack/webpack.config.dev.js"
+    "start": "webpack serve --config webpack/webpack.config.dev.js",
+    "lint-staged": "lint-staged",
+    "lint:js": "eslint src/**/*.js --fix"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wbkd/webpack-starter.git"
+    "url": "git+https://github.com/novay55555/bravia-web-controller.git"
   },
   "keywords": [
-    "webpack",
-    "startkit",
-    "frontend",
-    "es6",
-    "javascript",
-    "webdev"
+    "Bravia",
+    "Bravia TV",
+    "TV controller"
   ],
-  "author": "webkid.io",
+  "author": "gunhawk<gunhawk998@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wbkd/webpack-starter/issues"
+    "url": "https://github.com/novay55555/bravia-web-controller/issues"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -43,8 +40,11 @@
     "file-loader": "^6.2.0",
     "html-loader": "^1.3.2",
     "html-webpack-plugin": "^4.5.0",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.4",
     "mini-css-extract-plugin": "^1.3.2",
     "postcss-loader": "^4.1.0",
+    "rimraf": "^3.0.2",
     "sass": "^1.32.8",
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",
@@ -60,5 +60,13 @@
     "@babel/polyfill": "^7.12.1",
     "bootstrap": "^3.4.1",
     "core-js": "^3.8.1"
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "eslint --fix"
+    ],
+    "src/**/*.{css,less,sass,scss,vue}": [
+      "stylelint --fix"
+    ]
   }
 }

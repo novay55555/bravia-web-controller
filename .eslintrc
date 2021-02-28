@@ -1,14 +1,82 @@
 {
   "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended"
+  ],
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
   "parserOptions": {
     "ecmaVersion": 6,
-    "sourceType": "module"
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
   },
   "rules": {
-    "semi": 2
+    "indent": [
+      "error",
+      2,
+      {
+        "ignoredNodes": [
+          "TemplateLiteral *"
+        ],
+        "SwitchCase": 1
+      }
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "warn",
+          "error",
+          "info"
+        ]
+      }
+    ],
+    "space-before-function-paren": [
+      "error",
+      "always"
+    ],
+    "space-before-blocks": [
+      "error",
+      "always"
+    ],
+    "keyword-spacing": "error",
+    "space-infix-ops": "error",
+    "semi-spacing": "error",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1
+      }
+    ],
+    "comma-dangle": [
+      "error"
+    ],
+    "spaced-comment": [
+      "error"
+    ],
+    "eol-last": [
+      "error",
+      "always"
+    ],
+    "object-curly-spacing": ["error", "always"]
+  },
+  "globals": {
+    "$": true
   }
 }

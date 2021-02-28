@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    app: Path.resolve(__dirname, '../src/scripts/index.js'),
+    app: Path.resolve(__dirname, '../src/index.js'),
   },
   output: {
     path: Path.join(__dirname, '../build'),
@@ -14,7 +14,13 @@ module.exports = {
   optimization: {
     splitChunks: {
       chunks: 'all',
-      name: false,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          filename: 'js/vendor.[contenthash:8].js',
+          priority: -10,
+        }
+      },
     },
   },
   plugins: [
@@ -38,13 +44,18 @@ module.exports = {
       },
       {
         test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        include: /bootstrap/,
         use: {
           loader: 'file-loader',
           options: {
-            name: '[path][name].[ext]',
+            name: 'assets/bootstrap/[name].[ext]',
+            publicPath: '../'
           },
         },
       },
     ],
   },
+  externals: {
+    jquery: 'jQuery'
+  }
 };

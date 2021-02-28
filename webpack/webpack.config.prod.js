@@ -18,7 +18,9 @@ module.exports = merge(common, {
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/bundle.css',
+      filename: ({ chunk }) => {
+        return `css/${`${chunk.name || 'vendor'}.[contenthash:8]`}.css`
+      },
     }),
   ],
   module: {
@@ -30,8 +32,17 @@ module.exports = merge(common, {
       },
       {
         test: /\.s?css/i,
+        exclude: /node_modules/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
       },
+      {
+        test: /\.css$/i,
+        include: /node_modules/,
+        use: [
+          MiniCssExtractPlugin.loader, 
+          'css-loader'
+        ]
+      }
     ],
   },
 });
