@@ -1,6 +1,6 @@
 import { MountdComponent } from './base'
 import { WidgetButton } from './Button'
-import { audioControl, applications, hdmi, powerWidget, textFormWidget } from './widgets/index'
+import { audioControl, applications, hdmi, powerWidget, keyBoardWidget } from './widgets/index'
 
 const powerBtn = new WidgetButton({
   widget: powerWidget,
@@ -26,11 +26,11 @@ const hdmiBtn = new WidgetButton({
   btnName: 'HDMI',
   featureName: 'HDMI列表'
 })
-const textFormBtn = new WidgetButton({
-  widget: textFormWidget,
-  iconName: 'glyphicon-pencil',
-  btnName: '文本输入',
-  featureName: '文本输入'
+const keyboradBtn = new WidgetButton({
+  widget: keyBoardWidget,
+  iconName: 'glyphicon-th',
+  btnName: '遥控键盘',
+  featureName: '遥控键盘'
 })
 
 class MainContent extends MountdComponent {
@@ -43,9 +43,9 @@ class MainContent extends MountdComponent {
     this._widgetBtns = [
       powerBtn,
       appListBtn,
+      keyboradBtn,
       audioBtn,
-      hdmiBtn,
-      textFormBtn
+      hdmiBtn
     ]
   }
 

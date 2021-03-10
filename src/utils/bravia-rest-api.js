@@ -18,12 +18,10 @@ export const ERROR_CODE_MESSAGE = {
   [ERROR_CODE.SERVICE_UNAVAILABLE]: '无法连接Bravia'
 }
 
-export class BraviaRestApi {
+class BraviaApi {
   _hostIP = ''
 
   _PSK = ''
-
-  _reqId = 1
 
   _timeout = 5000
 
@@ -32,9 +30,21 @@ export class BraviaRestApi {
       throw new Error('hostIP is required')
     }
 
-    this._hostIP = hostIP || this._hostIP
-    this._PSK = PSK || this._PSK
+    if (!PSK) {
+      throw new Error('PSK is required')
+    }
+
+    this._hostIP = hostIP
+    this._PSK = PSK
     this._timeout = timeout || this._timeout
+  }
+}
+
+export class BraviaRestApi extends BraviaApi {
+  _reqId = 1
+
+  constructor ({ hostIP, PSK, timeout }) {
+    super({ hostIP, PSK, timeout })
   }
 
   _getApi (service) {
@@ -73,11 +83,8 @@ export class BraviaRestApi {
       }
 
       xhr.open('POST', this._getApi(service))
-
-      if (this._PSK) {
-        xhr.setRequestHeader('X-Auth-PSK', this._PSK)
-      }
-
+      xhr.setRequestHeader('X-Auth-PSK', this._PSK)
+      xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8')
       xhr.send(JSON.stringify(data))
       this._reqId++
     })
@@ -281,7 +288,7 @@ export class BraviaRestApi {
   terminateApps () { }
 }
 
-export class BraviaMockApi extends BraviaRestApi {
+export class BraviaMockRestApi extends BraviaRestApi {
   getApplicationList () {
     const appList = [[
       {
@@ -356,5 +363,138 @@ export class BraviaMockApi extends BraviaRestApi {
   setTextForm (text) {
     alert(`setTextForm: ${text}`)
     return Promise.resolve([])
+  }
+}
+
+export class BraviaIrccApi extends BraviaApi {
+  _irccActionMap = {
+    Up: 'AAAAAQAAAAEAAAB0Aw==',
+    Down: 'AAAAAQAAAAEAAAB1Aw==',
+    Right: 'AAAAAQAAAAEAAAAzAw==',
+    Left: 'AAAAAQAAAAEAAAA0Aw==',
+    Confirm: 'AAAAAQAAAAEAAABlAw==',
+    Back: 'AAAAAgAAAJcAAAAjAw==',
+    Home: 'AAAAAQAAAAEAAABgAw==',
+    Options: 'AAAAAgAAAJcAAAA2Aw=='
+  }
+
+  constructor ({ hostIP, PSK, timeout }) {
+    super({ hostIP, PSK, timeout })
+  }
+
+  _getApi () {
+    return `http://${this._hostIP}/sony/ircc`
+  }
+
+  _getIrccXml (irccCode) {
+    return /* html */ `<?xml version="1.0"?>
+      <s:Envelope
+        xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+        s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+        <s:Body>
+          <u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1">
+            <IRCCCode>${irccCode}</IRCCCode>
+          </u:X_SendIRCC>
+        </s:Body>
+      </s:Envelope>`
+  }
+
+  /**
+   * 
+   * @param {string} irccAction 
+   * @returns {Promise<any>}
+   */
+  _request (irccAction) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      const irccCode = this._irccActionMap[irccAction]
+
+      if (!irccCode) {
+        reject(new Error('不支持对应的IRCC行为'))
+        return
+      }
+
+      let timer = setTimeout(() => {
+        xhr.abort()
+        reject(new Error('timeout'))
+      }, this._timeout)
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          clearTimeout(timer)
+
+          const status = xhr.status
+
+          if (status >= 200 && status < 300) {
+            const response = JSON.parse(xhr.responseText)
+
+            if (response.error) {
+              reject(new Error(response.error[1] || '未知错误'))
+              return
+            }
+
+            resolve()
+          } else {
+            const errMsg = ERROR_CODE_MESSAGE[status] || '网络错误'
+
+            reject(new Error(errMsg))
+          }
+        }
+      }
+
+      xhr.open('POST', this._getApi())
+      xhr.setRequestHeader('X-Auth-PSK', this._PSK)
+      xhr.setRequestHeader('SOAPACTION', JSON.stringify('urn:schemas-sony-com:service:IRCC:1#X_SendIRCC'))
+      xhr.setRequestHeader('Content-Type', 'text/xml; charset=UTF-8')
+      xhr.send(this._getIrccXml(irccCode))
+      this._reqId++
+    })
+  }
+  
+  /**
+   * 
+   * @param {string} action 
+   */
+  trigger (action) {
+    return this._request(action)
+  }
+
+  triggerUp () {
+    return this._request('Up')
+  }
+
+  triggerDown () {
+    return this._request('Down')
+  }
+
+  triggerLeft () {
+    return this._request('Left')
+  }
+
+  triggerRight () {
+    return this._request('Right')
+  }
+
+  triggerConfirm () {
+    return this._request('Confirm')
+  }
+
+  triggerBack () {
+    return this._request('Back')
+  }
+
+  triggerHome () {
+    return this._request('Home')
+  }
+
+  triggerOptions () {
+    return this._request('Options')
+  }
+}
+
+export class BraviaMockIrccApi extends BraviaIrccApi {
+  trigger (action) {
+    alert(`trigger ircc action: ${action}`)
+    return Promise.resolve()
   }
 }

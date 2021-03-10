@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import { MountdComponent } from './base'
 import { modalApiSettings } from './ModalPreSettings'
+import { modalHelp } from './ModalHelp'
 
 class NavHeader extends MountdComponent {
   /**
@@ -17,6 +18,10 @@ class NavHeader extends MountdComponent {
 
     $el.on('click', '.btn_settings', () => {
       modalApiSettings.edit()
+    })
+
+    $el.on('click', '.btn_help', () => {
+      modalHelp.open()
     })
   }
 
@@ -37,6 +42,9 @@ class NavHeader extends MountdComponent {
           <ul class="nav navbar-nav navbar-right">
             <li>
               <a class="btn_settings" href="javascript:void(0);">设置<span class="sr-only">(current)</span></a>
+            </li>
+            <li>
+              <a class="btn_help" href="javascript:void(0);">帮助<span class="sr-only">(current)</span></a>
             </li>
           </ul>
         </div>

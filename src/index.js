@@ -10,12 +10,14 @@ import { modalApiSettings } from './components/ModalPreSettings'
 import { modalFeature } from './components/ModalFeature'
 import { navHeader } from './components/Header'
 import { mainContent } from './components/MainContent'
+import { modalHelp } from './components/ModalHelp'
 
 function renderDOM () {
   navHeader.render()
   mainContent.render()
   modalApiSettings.render()
   modalFeature.render()
+  modalHelp.render()
 }
 
 function checkApi () {
