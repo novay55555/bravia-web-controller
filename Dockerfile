@@ -9,5 +9,5 @@ ADD .babelrc /
 RUN npm run build
 
 FROM nginx:1.9
-COPY --from=builder /build/* /var/www/html/
+COPY --from=builder /build /var/www/html/
 COPY bravia.nginx.conf /etc/nginx/conf.d/
