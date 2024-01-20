@@ -186,7 +186,18 @@ export class BraviaRestApi extends BraviaApi {
 
   getSupportedApiInfo () { }
 
-  getSystemInformation () { }
+  /**
+   * 
+   * @returns {Promise<Array<{generation: string, product: string, serial: string, name: string, language: string, model: string, macAddr:string}>>}
+   */
+  getSystemInformation () {
+    return this._request('system', {
+      'method': 'getSystemInformation',
+      'id': this._reqId,
+      'params': [],
+      'version': '1.0'
+    })
+  }
 
   getSystemSupportedFunction () { }
 
@@ -363,6 +374,18 @@ export class BraviaMockRestApi extends BraviaRestApi {
   setTextForm (text) {
     alert(`setTextForm: ${text}`)
     return Promise.resolve([])
+  }
+
+  getSystemInformation () {
+    return Promise.resolve([{
+      'generation': '5.0.1',
+      'product': 'TV',
+      'serial': '1000001',
+      'name': 'BRAVIA',
+      'language': 'eng',
+      'model': 'FW-55BZ35F',
+      'macAddr': '04:5D:4B:AD:6D:E1'
+    }])
   }
 }
 

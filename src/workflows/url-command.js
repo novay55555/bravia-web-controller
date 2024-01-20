@@ -55,7 +55,10 @@ export class PowerTV extends Command {
       return Promise.reject(new Error('非法电源开关控制'))
     }
 
-    return this._api.setPowerStatus(!!status)
+    // 需要先局域网唤醒
+    // https://pro-bravia.sony.net/develop/integrate/ip-control/
+    return this._api.getSystemInformation()
+      .then(() => this._api.setPowerStatus(!!status))
   }
 }
 

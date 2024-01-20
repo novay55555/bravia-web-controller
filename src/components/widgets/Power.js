@@ -19,7 +19,11 @@ export class PowerWidget extends Widget {
       const $target = $(e.target)
       const status = !!$target.data('power-status')
 
-      this._api.setPowerStatus(status)
+      // 需要先局域网唤醒
+      // https://pro-bravia.sony.net/develop/integrate/ip-control/
+      this._api.getSystemInformation().then(() => {
+        this._api.setPowerStatus(status)
+      })
     })
   }
 
